@@ -25,6 +25,7 @@ from pyramid_sacrud.interfaces import ISacrudResource
 class BaseResource(object):
 
     breadcrumb = True
+    registry = {}
 
     def __init__(
             self, table, dbsession=None, name=None, **kwargs
@@ -62,7 +63,17 @@ class BaseResource(object):
 
     @classmethod
     def _get_id(cls, obj, json=True):
-        return pk_to_list(obj, json)
+        encoder = cls.registry.get('json_encoder', None)
+        return pk_to_list(obj, json, encoder=encoder)
+
+    @classmethod
+    def add_to_registry(cls, name, value):
+        """Currently there could be two keys in the regustry:
+        `json_encoder` - a class inheriting json.JSONEncoder and
+        `json_decoder` - a class inheriting json.JSONDecoder, which
+        are used in jsom dump/restore cycle for foreign keys
+        """
+        cls.registry[name] = value
 
     @property
     def ps_crud(self):

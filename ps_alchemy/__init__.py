@@ -9,7 +9,7 @@ from pyramid.events import ApplicationCreated
 from pyramid_sacrud.routes import resources_preparing_factory
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 
-from .resources import ListResource
+from .resources import ListResource, BaseResource
 
 
 def models_preparing(app):
@@ -37,3 +37,4 @@ def includeme(config):
     # deform
     config.include('sacrud_deform')
     config.add_static_view('deform_static', 'deform:static')
+    config.registry.settings['ps_alchemy.base_resource'] = BaseResource
